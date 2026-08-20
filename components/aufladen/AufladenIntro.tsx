@@ -13,6 +13,7 @@ export default function AufladenIntro() {
         </p>
         <Link
           href="/listings"
+          data-testid="aufladen-intro-link"
           className="mt-8 inline-block rounded-full bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-gray-700"
         >
           Passende Fahrzeuge finden

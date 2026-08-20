@@ -1,9 +1,11 @@
 import "@testing-library/jest-dom";
-import { jest } from "@jest/globals";
+import { beforeEach, jest } from "@jest/globals";
+
+const mockPush = jest.fn();
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
-    push: jest.fn(),
+    push: mockPush,
     replace: jest.fn(),
     refresh: jest.fn(),
     back: jest.fn(),
@@ -13,3 +15,20 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/",
   useSearchParams: () => new URLSearchParams(),
 }));
+
+const mockFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
+
+function resetFetchMock() {
+  mockFetch.mockReset();
+  mockFetch.mockResolvedValue({
+    ok: true,
+    json: async () => ({ results: [] }),
+  } as Response);
+}
+
+global.fetch = mockFetch;
+
+beforeEach(() => {
+  resetFetchMock();
+  mockPush.mockClear();
+});

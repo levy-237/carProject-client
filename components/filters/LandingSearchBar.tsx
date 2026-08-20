@@ -60,6 +60,7 @@ export default function LandingSearchBar() {
         className="pointer-events-none absolute inset-x-0 top-0 z-0 h-2/3 bg-[url('/search-bg1.png')] bg-cover bg-bottom bg-no-repeat"
       />
       <form
+        data-testid="landing-search-bar-form"
         onSubmit={handleSubmit}
         className="relative z-10 w-full max-w-4xl rounded-3xl border border-gray-200 bg-white p-10 shadow-lg"
       >
@@ -110,6 +111,7 @@ export default function LandingSearchBar() {
           <div className="w-full flex justify-center">
             <button
               type="submit"
+              data-testid="search-button"
               className="w-[70%]  rounded-full bg-gray-900 px-8 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-gray-700"
             >
               Suchen

@@ -119,13 +119,19 @@ export default function DropDownFilter({
       <button
         type="button"
         onClick={handleToggleOpen}
+        data-testid="drop-down-filter-button"
         className={`flex w-full items-center gap-2 rounded-lg border bg-white px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
           isOpen
             ? "border-gray-400 shadow-sm"
             : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
         } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
       >
-        <span className="truncate text-left">{name}</span>
+        <span
+          className="truncate text-left"
+          data-testid="drop-down-filter-name"
+        >
+          {name}
+        </span>
         <span className="ml-auto flex shrink-0 items-center gap-1.5">
           <ActiveFilterCountBadge count={selectedCount} />
           <ChevronDown
@@ -138,15 +144,22 @@ export default function DropDownFilter({
       </button>
 
       {isOpen && (
-        <div className="fadeIn absolute left-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+        <div
+          className="fadeIn absolute left-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
+          data-testid="drop-down-filter-dropdown"
+        >
           {searchable && (
-            <div className="border-b border-gray-100 p-3">
+            <div
+              className="border-b border-gray-100 p-3"
+              data-testid="drop-down-filter-search"
+            >
               <div className="relative">
                 <Search
                   className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400"
                   aria-hidden="true"
                 />
                 <input
+                  data-testid="drop-down-filter-search-input"
                   type="text"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
@@ -159,7 +172,10 @@ export default function DropDownFilter({
 
           <ul className="max-h-56 overflow-y-auto p-2">
             {isLoading ? (
-              <li className="px-3 py-6 text-center text-sm text-gray-400">
+              <li
+                className="px-3 py-6 text-center text-sm text-gray-400"
+                data-testid="drop-down-filter-loading"
+              >
                 Loading...
               </li>
             ) : error ? (
@@ -171,7 +187,7 @@ export default function DropDownFilter({
                 const isSelected = value.includes(Number(option.id));
 
                 return (
-                  <li key={option.id}>
+                  <li key={option.id} data-testid="drop-down-filter-option">
                     <label className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2 transition-colors duration-150 hover:bg-gray-50">
                       <input
                         type="checkbox"
