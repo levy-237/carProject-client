@@ -5,6 +5,8 @@ export async function readListing(card: Locator) {
   const href = await card.getAttribute("href");
   if (!href) throw new Error("The listing card must link to its details page.");
 
+  console.log(href);
+
   return {
     href,
     id: href.split("/").pop()!,
