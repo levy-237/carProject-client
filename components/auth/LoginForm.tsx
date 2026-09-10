@@ -34,7 +34,10 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
       {error && (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">
+        <p
+          data-testid="login-error"
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700"
+        >
           {error}
         </p>
       )}

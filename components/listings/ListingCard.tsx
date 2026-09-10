@@ -91,6 +91,7 @@ export default function ListingCard({
 
   return (
     <Link
+      data-testid="listing-card"
       href={`/listings/${listing.id}`}
       className="relative group flex min-w-0 w-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md md:h-100 md:flex-row"
     >
