@@ -73,7 +73,10 @@ export default function ListingSidebar() {
   };
 
   return (
-    <aside className="flex flex-col gap-3 rounded-3xl border border-gray-200 bg-white p-6 shadow-lg max-lg:hidden w-95 shrink-0">
+    <aside
+      className="flex flex-col gap-3 rounded-3xl border border-gray-200 bg-white p-6 shadow-lg max-lg:hidden w-95 shrink-0"
+      data-testid="sidebar-filter"
+    >
       <SearchBar value={search} onChange={(search) => setSearch(search)} />
 
       <div className="flex flex-col gap-2">

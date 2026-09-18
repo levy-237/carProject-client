@@ -22,6 +22,7 @@ export type IdName = {
 export type Owner = {
   id: number;
   username: string;
+  // province_detail: TODO
 };
 
 export type ModelTrimDetail = {

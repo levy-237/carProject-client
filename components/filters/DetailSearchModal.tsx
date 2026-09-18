@@ -55,6 +55,7 @@ export default function DetailSearchModal({ count }: DetailSearchModalProps) {
           className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto bg-black/50 p-4 sm:p-8"
           onClick={() => setIsOpen(false)}
           role="presentation"
+          data-testid="filterModal"
         >
           <div
             className="relative my-4 w-full max-w-4xl"
