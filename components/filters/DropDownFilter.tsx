@@ -3,13 +3,10 @@
 import { ChevronDown, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ActiveFilterCountBadge from "./ActiveFilterCountBadge";
+import useFilterOptions, { type ApiFilterItem } from "@/hooks/useFilterOptions";
+import useClickOutside from "@/hooks/useClickOutside";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-
-export type ApiFilterItem = {
-  id: string;
-  name: string;
-};
+export type { ApiFilterItem } from "@/hooks/useFilterOptions";
 
 export type SelectedFilterIds = number[];
 
@@ -32,65 +29,38 @@ export default function DropDownFilter({
 }: DropDownFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [options, setOptions] = useState<ApiFilterItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!isOpen) return;
+  const searchTerm = searchable ? debouncedSearch.trim() : "";
+  const searchTooShort = searchTerm.length === 1;
 
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-        setSearch("");
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
+  const {
+    data: options = [],
+    isLoading,
+    isError,
+  } = useFilterOptions({
+    apiName,
+    search: searchTerm,
+    enabled: isOpen && !disabled,
+  });
 
   useEffect(() => {
-    if (!isOpen) return;
-    if (searchable && search && search.length < 2) return;
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [search]);
 
-    const fetchOptions = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const query =
-          searchable && search.trim()
-            ? `?name=${encodeURIComponent(search.trim())}`
-            : "";
-        const url = `${API_BASE_URL}${apiName}${query}`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch filter options");
-        }
-
-        const data = await response.json();
-        const results: ApiFilterItem[] = data.results.map(
-          (item: ApiFilterItem) => ({
-            ...item,
-            id: String(item.id),
-          }),
-        );
-        setOptions(results);
-      } catch {
-        setError("Could not load options");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchOptions();
-  }, [isOpen, apiName, search, searchable]);
+  useClickOutside(
+    containerRef,
+    () => {
+      setIsOpen(false);
+      setSearch("");
+    },
+    isOpen,
+  );
 
   const handleToggleOpen = () => {
     if (disabled) return;
@@ -161,13 +131,17 @@ export default function DropDownFilter({
           )}
 
           <ul className="max-h-56 overflow-y-auto p-2">
-            {isLoading ? (
+            {searchTooShort ? (
+              <li className="px-3 py-6 text-center text-sm text-gray-400">
+                Bitte mindestens 2 Zeichen eingeben.
+              </li>
+            ) : isLoading ? (
               <li className="px-3 py-6 text-center text-sm text-gray-400">
                 Loading...
               </li>
-            ) : error ? (
+            ) : isError ? (
               <li className="px-3 py-6 text-center text-sm text-red-500">
-                {error}
+                Could not load options
               </li>
             ) : options.length > 0 ? (
               options.map((option) => {

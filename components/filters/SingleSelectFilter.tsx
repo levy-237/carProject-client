@@ -1,13 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-
-type ApiFilterItem = {
-  id: string;
-  name: string;
-};
+import useFilterOptions from "@/hooks/useFilterOptions";
 
 type SingleSelectFilterProps = {
   apiName: string;
@@ -29,47 +22,14 @@ export default function SingleSelectFilter({
   disabled = false,
   placeholder = "Bitte wählen",
 }: SingleSelectFilterProps) {
-  const [options, setOptions] = useState<ApiFilterItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchOptions = async () => {
-      if (disabled) {
-        setOptions([]);
-        return;
-      }
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const url = `${API_BASE_URL}${apiName}`;
-        console.log(url);
-
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch options");
-        }
-
-        const data = await response.json();
-        const results: ApiFilterItem[] = data.results.map(
-          (item: ApiFilterItem) => ({
-            ...item,
-            id: String(item.id),
-          }),
-        );
-        setOptions(results);
-      } catch {
-        setError("Optionen konnten nicht geladen werden");
-        setOptions([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchOptions();
-  }, [apiName, disabled]);
+  const { data = [], isLoading, isError } = useFilterOptions({
+    apiName,
+    search: "",
+    enabled: !disabled,
+  });
+  const options = disabled || isError ? [] : data;
+  const error =
+    !disabled && isError ? "Optionen konnten nicht geladen werden" : null;
 
   return (
     <label className="flex flex-col gap-2 text-sm font-medium text-gray-700">
