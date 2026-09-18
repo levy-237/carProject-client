@@ -1,17 +1,16 @@
 import { getAccessToken } from "@/lib/auth";
+import { ListingSchema, ListingsResponseSchema } from "@/schemas/listings";
 import type {
   AddListingFormValues,
   Listing,
-  ListingDetailResponse,
-  ListingListResponse,
   ListingsResponse,
 } from "@/types/listings";
 
-export async function fetchMyListings(): Promise<ListingListResponse> {
+export async function fetchMyListings(): Promise<ListingsResponse> {
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
-    return { success: false, message: "Unauthorized", data: null };
+    throw new Error("Unauthorized");
   }
 
   const response = await fetch(`${process.env.API_BASE_URL}listings/my/`, {
@@ -21,29 +20,22 @@ export async function fetchMyListings(): Promise<ListingListResponse> {
     cache: "no-store",
   });
 
-  const data = await response.json();
-
   if (!response.ok) {
-    return {
-      success: false,
-      message: data.detail || data.error || "Failed to fetch listings",
-      data: null,
-    };
+    throw new Error("Failed to fetch my listings");
   }
 
-  return {
-    success: true,
-    message: "Listings fetched successfully",
-    data: data as ListingsResponse,
-  };
+  const json = await response.json();
+  const data = ListingsResponseSchema.parse(json);
+
+  return data;
 }
 export async function fetchMyListingsById(
   id: number,
-): Promise<ListingDetailResponse> {
+): Promise<Listing> {
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
-    return { success: false, message: "Unauthorized", data: null };
+    throw new Error("Unauthorized");
   }
 
   const response = await fetch(
@@ -56,21 +48,12 @@ export async function fetchMyListingsById(
     },
   );
 
-  const data = await response.json();
-  console.log(data);
   if (!response.ok) {
-    return {
-      success: false,
-      message: data.detail || data.error || "Failed to fetch listings",
-      data: null,
-    };
+    throw new Error("Failed to fetch my listing");
   }
 
-  return {
-    success: true,
-    message: "Listing fetched successfully",
-    data: data as Listing,
-  };
+  const json = await response.json();
+  return ListingSchema.parse(json);
 }
 
 export function myListingFetchToEditForm(

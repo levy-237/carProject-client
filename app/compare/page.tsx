@@ -1,4 +1,5 @@
 import ComparationView from "@/components/compare-listings/ComparationView";
+import ErrorCard from "@/components/skeletons&&errors/ErrorCard";
 import { createPageMetadata } from "@/lib/metadata";
 import { fetchCompareListings } from "@/lib/compare-listings";
 
@@ -11,19 +12,20 @@ export default async function page({
 }) {
   const { compare } = await searchParams;
 
-  console.log(compare);
-
-  const response = await fetchCompareListings(compare);
-
-  if (!response.success) {
+  let listings;
+  try {
+    listings = await fetchCompareListings(compare);
+  } catch (error) {
+    console.error("Failed to load comparison listings:", error);
     return (
       <main className="mx-auto w-full max-w-7xl px-4 py-10">
-        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {response.message}
-        </p>
+        <ErrorCard
+          title="Vergleich"
+          message="Anzeigen konnten nicht geladen werden."
+        />
       </main>
     );
   }
 
-  return <ComparationView listings={response.data} />;
+  return <ComparationView listings={listings} />;
 }

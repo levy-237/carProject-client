@@ -3,19 +3,23 @@ import Carousel from "@/components/ui/Carousel";
 import { fetchTopDeals } from "@/lib/listings";
 
 export default async function TopDeals() {
-  const response = await fetchTopDeals();
-
-  console.log(response.data);
-  if (!response.success || response.data.length === 0) {
-    return <></>;
+  let response;
+  try {
+    response = await fetchTopDeals();
+  } catch (error) {
+    console.log("failed to fetch top deals");
+    return null;
   }
+
+  if (response.results.length === 0) return null;
+
   return (
     <section className="px-4 py-8 pb-12">
       <div className="mx-auto w-full max-w-4xl">
         <h2 className="mb-6 text-xl font-semibold">Top Deals</h2>
 
         <Carousel className="min-h-[22rem] pb-10" itemsPerSlide={2}>
-          {response.data.map((deal) => (
+          {response.results.map((deal) => (
             <Link
               key={deal.id}
               href={`/listings/${deal.id}`}

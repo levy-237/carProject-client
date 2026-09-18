@@ -1,10 +1,6 @@
-import type {
-  Listing,
-  ListingArrayResponse,
-  ListingDetailResponse,
-  ListingListResponse,
-  ListingsResponse,
-} from "@/types/listings";
+import type { DetailSearchFormState } from "@/lib/detail-search";
+import { ListingSchema, ListingsResponseSchema } from "@/schemas/listings";
+import type { Listing, ListingsResponse } from "@/types/listings";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
@@ -24,9 +20,24 @@ export function formatMileage(mileage: number): string {
   return `${mileage.toLocaleString("de-DE")} km`;
 }
 
-export async function fetchListings(
-  queryString: string,
-): Promise<ListingListResponse> {
+export async function fetchListings({
+  filters,
+}: {
+  filters: DetailSearchFormState;
+}): Promise<ListingsResponse> {
+  const url = new URLSearchParams();
+  for (const [key, value] of Object.entries(filters)) {
+    if (typeof value === "string" && value) {
+      url.set(key, value.toString().trim());
+    } else if (Array.isArray(value) && value.length > 0) {
+      for (const item of value) {
+        url.append(key, item.toString().trim());
+      }
+    }
+  }
+
+  const queryString = url.toString();
+
   const fetchurl = queryString
     ? `${API_BASE_URL}listings/?${queryString}`
     : `${API_BASE_URL}listings/`;
@@ -38,48 +49,29 @@ export async function fetchListings(
   });
 
   if (!response.ok) {
-    return {
-      success: false,
-      message: `Failed to fetch listings (${response.status})`,
-      data: null,
-    };
+    throw new Error("Error fetching data");
   }
 
-  const data = (await response.json()) as ListingsResponse;
+  const jsonres = await response.json();
 
-  return {
-    success: true,
-    message: "Listings fetched successfully",
-    data,
-  };
+  const data = ListingsResponseSchema.parse(jsonres);
+
+  return data;
 }
 
-export async function fetchListingDetail(
-  id: number,
-): Promise<ListingDetailResponse> {
+export async function fetchListingDetail(id: number): Promise<Listing> {
   const response = await fetch(`${API_BASE_URL}listings/${id}/`, {
     cache: "no-store",
   });
 
-  const data = await response.json();
-
   if (!response.ok) {
-    return {
-      success: false,
-      message: data.detail || data.error || "Failed to fetch listing",
-      data: null,
-    };
+    throw new Error(`Error fetching listing (${response.status})`);
   }
-  console.log(data);
 
-  return {
-    success: true,
-    message: "Listing fetched successfully",
-    data: data as Listing,
-  };
+  return ListingSchema.parse(await response.json());
 }
 
-export async function fetchTopDeals(): Promise<ListingArrayResponse> {
+export async function fetchTopDeals(): Promise<ListingsResponse> {
   const fetchurl = `${API_BASE_URL}listings/most-viewed/`;
 
   console.log(fetchurl);
@@ -87,19 +79,13 @@ export async function fetchTopDeals(): Promise<ListingArrayResponse> {
   const response = await fetch(fetchurl, {
     cache: "no-store",
   });
-
-  const data = await response.json();
   if (!response.ok) {
-    return {
-      success: false,
-      message: data.detail || data.error || "Failed to fetch top deals",
-      data: null,
-    };
+    throw new Error("Error fetching top deals");
   }
 
-  return {
-    success: true,
-    message: "Top deals fetched successfully",
-    data: data.results as Listing[],
-  };
+  const jsonres = await response.json();
+
+  const data = ListingsResponseSchema.parse(jsonres);
+
+  return data;
 }

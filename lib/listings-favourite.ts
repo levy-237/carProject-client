@@ -1,11 +1,12 @@
 import { getAccessToken } from "@/lib/auth";
-import type { ListingListResponse, ListingsResponse } from "@/types/listings";
+import { ListingsResponseSchema } from "@/schemas/listings";
+import type { ListingsResponse } from "@/types/listings";
 
-export async function fetchListingsFavourite(): Promise<ListingListResponse> {
+export async function fetchListingsFavourite(): Promise<ListingsResponse> {
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
-    return { success: false, message: "Unauthorized", data: null };
+    throw new Error("Unauthorized");
   }
 
   const response = await fetch(
@@ -18,19 +19,10 @@ export async function fetchListingsFavourite(): Promise<ListingListResponse> {
     },
   );
 
-  const data = await response.json();
-
   if (!response.ok) {
-    return {
-      success: false,
-      message: data.detail || data.error || "Failed to fetch favourites",
-      data: null,
-    };
+    throw new Error("Failed to fetch favourites");
   }
 
-  return {
-    success: true,
-    message: "Favourites fetched successfully",
-    data: data as ListingsResponse,
-  };
+  const json = await response.json();
+  return ListingsResponseSchema.parse(json);
 }

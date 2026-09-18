@@ -1,25 +1,28 @@
 import FavouriteListingsView from "@/components/me/FavouriteListingsView";
+import ErrorCard from "@/components/skeletons&&errors/ErrorCard";
 import { createPageMetadata } from "@/lib/metadata";
 import { fetchListingsFavourite } from "@/lib/listings-favourite";
 
 export const metadata = createPageMetadata("Favoriten");
 
 export default async function MeFavouritesPage() {
-  const response = await fetchListingsFavourite();
-
-  if (!response.success) {
+  let listings;
+  try {
+    listings = await fetchListingsFavourite();
+  } catch (error) {
+    console.error("Failed to load favourites:", error);
     return (
-      <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-lg md:p-10">
-        <h1 className="text-2xl font-semibold text-gray-900">Favoriten</h1>
-        <p className="mt-8 text-sm text-red-600">{response.message}</p>
-      </div>
+      <ErrorCard
+        title="Favoriten"
+        message="Favoriten konnten nicht geladen werden."
+      />
     );
   }
 
   return (
     <FavouriteListingsView
-      listings={response.data.results}
-      count={response.data.count}
+      listings={listings.results}
+      count={listings.count}
     />
   );
 }
