@@ -1,28 +1,19 @@
-import type { Listing, ListingArrayResponse } from "@/types/listings";
+import { ListingSchema } from "@/schemas/listings";
+import type { Listing } from "@/types/listings";
 
 export async function fetchCompareListings(
   queryString: string,
-): Promise<ListingArrayResponse> {
+): Promise<Listing[]> {
   const fetchurl = `${process.env.API_BASE_URL}listings/compare/?ids=${queryString}`;
-
-  console.log(fetchurl);
 
   const response = await fetch(fetchurl, {
     cache: "no-store",
   });
-  const data = await response.json();
-
   if (!response.ok) {
-    return {
-      success: false,
-      message: data.detail || data.error || "Failed to fetch listings",
-      data: null,
-    };
+    throw new Error("Failed to fetch comparison listings");
   }
 
-  return {
-    success: true,
-    message: "Listings fetched successfully",
-    data: data.results as Listing[],
-  };
+  const json = await response.json();
+  const data = ListingSchema.array().parse(json.results);
+  return data;
 }
