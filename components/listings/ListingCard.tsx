@@ -86,6 +86,8 @@ export default function ListingCard({
   isInCompare: (id: number) => boolean;
 }) {
   const year = formatYear(listing.makeyear);
+  const drivetrain = listing.model_trim_detail?.drivetrain_name ??
+    listing.model_trim_detail?.drivetrain_detail?.name;
 
   const router = useRouter();
 
@@ -119,7 +121,7 @@ export default function ListingCard({
         <p className="mt-1 truncate text-sm text-gray-500">
           {listing.model_detail.name}
           <span className="mx-1.5 text-gray-300">·</span>
-          {listing.model_trim_detail.name}
+          {listing.model_trim_detail?.name ?? "—"}
         </p>
 
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-600">
@@ -151,12 +153,7 @@ export default function ListingCard({
           <SpecItem label="Zustand" value={listing.condition_detail.name} />
           <SpecItem label="Baujahr" value={year} />
           <SpecItem label="Leistung" value={`${listing.power} PS`} />
-          {listing.model_trim_detail.drivetrain_detail && (
-            <SpecItem
-              label="Antrieb"
-              value={listing.model_trim_detail.drivetrain_detail.name}
-            />
-          )}
+          {drivetrain && <SpecItem label="Antrieb" value={drivetrain} />}
         </div>
 
         <div className="my-4 flex flex-wrap gap-2">

@@ -98,7 +98,7 @@ function CompareListingCard({ listing }: { listing: Listing }) {
         </p>
 
         <dl className="mt-6 flex-1">
-          <CompareSpecRow label="Trim" value={trim.name} />
+          <CompareSpecRow label="Trim" value={trim?.name ?? "—"} />
           <CompareSpecRow label="Zustand" value={listing.condition_detail.name} />
           <CompareSpecRow label="Karosserie" value={listing.body_type_detail.name} />
           <CompareSpecRow label="Baujahr" value={year} />
@@ -106,7 +106,7 @@ function CompareListingCard({ listing }: { listing: Listing }) {
           <CompareSpecRow label="Leistung" value={`${listing.power} PS`} />
           <CompareSpecRow
             label="Antrieb"
-            value={trim.drivetrain_detail?.name ?? "—"}
+            value={trim?.drivetrain_name ?? trim?.drivetrain_detail?.name ?? "—"}
           />
           <CompareSpecRow
             label="Batteriezustand"
@@ -129,16 +129,16 @@ function CompareListingCard({ listing }: { listing: Listing }) {
           <CompareSpecRow label="Pickerl" value={formatBoolean(listing.pickerl)} />
           <CompareSpecRow
             label="DC-Laden"
-            value={formatPositiveNumber(trim.max_dc_charge_kw, " kW")}
+            value={formatPositiveNumber(trim?.max_dc_charge_kw, " kW")}
           />
           <CompareSpecRow
             label="AC-Laden"
-            value={formatPositiveNumber(trim.max_ac_charge_kw, " kW")}
+            value={formatPositiveNumber(trim?.max_ac_charge_kw, " kW")}
           />
           <CompareSpecRow
             label="20–80 % Laden"
             value={formatPositiveNumber(
-              trim.twenty_to_eighty_charge_min,
+              trim?.twenty_to_eighty_charge_min,
               " Min.",
             )}
           />

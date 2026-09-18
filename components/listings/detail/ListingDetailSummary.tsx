@@ -49,7 +49,7 @@ export default function ListingDetailSummary({
             <span className="mx-1.5 text-gray-300">·</span>
             {listing.model_detail.name}
             <span className="mx-1.5 text-gray-300">·</span>
-            {listing.model_trim_detail.name}
+            {listing.model_trim_detail?.name ?? "—"}
           </p>
         </div>
 

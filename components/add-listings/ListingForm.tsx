@@ -49,6 +49,7 @@ export default function ListingForm({
   } = useForm<AddListingFormValues>({
     resolver: zodResolver(AddListingSchema),
     defaultValues: listing || {
+      model_trim: null,
       heat_pump: false,
       garantie: false,
       pickerl: false,
