@@ -1,4 +1,4 @@
-import { Eye, Heart, Volume2 } from "lucide-react";
+import { CarFront, Eye, Heart, MapPin, Volume2 } from "lucide-react";
 import Link from "next/link";
 import FavoriteListingButton from "@/components/listings/FavoriteListingButton";
 import { formatMileage, formatPrice, formatYear } from "@/lib/listings";
@@ -93,14 +93,14 @@ export default function ListingCard({
     <Link
       data-testid="listing-card"
       href={`/listings/${listing.id}`}
-      className="relative group flex min-w-0 w-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md md:h-100 md:flex-row"
+      className="relative group flex min-w-0 w-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md md:min-h-100 md:flex-row"
     >
       <ModifyListingCompare
         id={Number(listing.id)}
         handleAddToCompare={handleAddToCompare}
         isInCompare={isInCompare}
       />
-      <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-gray-100 md:aspect-auto md:h-full md:w-[40%]">
+      <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-gray-100 md:aspect-auto md:w-[40%]">
         <img
           src={listing.cover_image?.image ?? "/placeholder.png"}
           alt={listing.title}
@@ -122,6 +122,27 @@ export default function ListingCard({
           {listing.model_trim_detail.name}
         </p>
 
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-600">
+          <span className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 font-medium">
+            <CarFront
+              className="size-3.5 shrink-0 text-gray-500"
+              aria-hidden="true"
+            />
+            <span className="sr-only">Karosserie: </span>
+            {listing.body_type_detail.name}
+          </span>
+          {/* {listing.owner.province_detail && (
+            <span className="inline-flex items-center gap-1.5">
+              <MapPin
+                className="size-3.5 shrink-0 text-gray-400"
+                aria-hidden="true"
+              />
+              <span className="sr-only">Bundesland: </span>
+              {listing.owner.province_detail.name}
+            </span>
+          )} */}
+        </div>
+
         <p className="mt-4 text-2xl font-bold text-gray-900">
           {formatPrice(listing.price)}
         </p>
@@ -138,7 +159,7 @@ export default function ListingCard({
           )}
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="my-4 flex flex-wrap gap-2">
           <InfoPill>{formatMileage(listing.mileage)}</InfoPill>
           {listing.real_summer_range && (
             <InfoPill>Sommer {listing.real_summer_range} km</InfoPill>

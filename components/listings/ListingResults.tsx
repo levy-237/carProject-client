@@ -130,7 +130,10 @@ export default function ListingResults({ user }: { user: UserProfile | null }) {
   }
 
   return (
-    <section className="flex min-w-0 w-full max-w-4xl flex-1 flex-col gap-4">
+    <section
+      data-testid="listing-results"
+      className="flex min-w-0 w-full max-w-4xl flex-1 flex-col gap-4"
+    >
       {results.length > 0 ? (
         <>
           <div className="flex items-center justify-between gap-4">

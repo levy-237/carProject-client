@@ -138,7 +138,10 @@ export default function DropDownFilter({
       </button>
 
       {isOpen && (
-        <div className="fadeIn absolute left-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+        <div
+          className="fadeIn absolute left-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
+          data-testid="filter-modal"
+        >
           {searchable && (
             <div className="border-b border-gray-100 p-3">
               <div className="relative">
